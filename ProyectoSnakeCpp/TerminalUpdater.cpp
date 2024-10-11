@@ -15,6 +15,7 @@ private:
     std::vector<std::vector<int>> myGrid = std::vector<std::vector<int>>(10, std::vector<int>(15, 0));
     //generation of the matrix that can be any type, you just need to define the x and y size and then enter the "Emptyness" value 
     //here the x value is 15 and the y value is 10 and its all filled with 0's
+    //To call a value in the matrix myGrid[i][j] is used
 };
 
 int main(){
