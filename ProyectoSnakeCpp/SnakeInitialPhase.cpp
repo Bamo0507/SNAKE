@@ -95,7 +95,7 @@ void generarLaberitno(int width, int height){
         {
           x = rand() % (width - 2);
           y = rand() % (height - 2); 
-          if (terreno[x][y] != 0){
+          if (terreno[x][y] == 0){
             terreno[y][x] = 3;
             break;
           }
