@@ -9,10 +9,12 @@ class TerminalUpdater {
 public:
     void Print(std::ostream& out) const;
     void SetValue(size_t row, size_t col, int val); // Declare SetValue method
+    int GetValue(int width, int height);
+    void GenerateMaze(int width, int height);
 
 private:
     //std::vector<std::vector<int>> myGrid = {{1, 1, 1}, {1, 0, 1}, {1, 1, 1}}; // Example grid
-    std::vector<std::vector<int>> myGrid = std::vector<std::vector<int>>(10, std::vector<int>(15, 0));
+    std::vector<std::vector<int>> myGrid = std::vector<std::vector<int>>(11, std::vector<int>(16, 0));
     //generation of the matrix that can be any type, you just need to define the x and y size and then enter the "Emptyness" value 
     //here the x value is 15 and the y value is 10 and its all filled with 0's
     //To call a value in the matrix myGrid[i][j] is used
@@ -29,8 +31,9 @@ int main(){
 
     TerminalUpdater updater;
     updater.Print(std::cout);
-    sleep(5);
-    updater.SetValue(1,1,1); // Change value in coords like this x,y,value -> this code changes the value in x = 1, y = 1 to one
+    sleep(1);
+    //updater.SetValue(1,1,1); // Change value in coords like this x,y,value -> this code changes the value in x = 1, y = 1 to one
+    updater.GenerateMaze(11,16);
     updater.Print(std::cout);
 }
 
@@ -75,3 +78,33 @@ void TerminalUpdater::Print(std::ostream& out) const
     out.flush(); // Ensure the output is flushed to the console
 }
 */
+
+void TerminalUpdater::GenerateMaze(int width, int height)
+{
+    int startx = width/2;
+
+    // Entry Point
+    myGrid[startx % myGrid.size()][0 % myGrid[0].size()] = 5;
+    //Exit Point
+    myGrid[startx % myGrid.size()][(height-1)% myGrid[0].size()] = 6;
+    //Maze Generator w Exit and Entry point
+    int Num_of_walls = (width*height)*0.4;
+
+    int x, y; 
+    for (int i = 0; i < Num_of_walls; i++) {
+
+        x = rand() % (width - 2); // Excluir 0 y ancho-1 para evitar bordes
+        y = rand() % (height - 2); // Excluir 0 y largo-1 para evitar bordes
+
+        SetValue(x,y,3);
+        
+    }
+    
+
+}
+
+int TerminalUpdater::GetValue(int width, int height){
+    
+
+
+}
