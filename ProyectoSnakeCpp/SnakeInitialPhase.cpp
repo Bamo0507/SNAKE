@@ -80,32 +80,27 @@ void restaurarTerminal() {
 // Funcion para generar el laberinto
 void generarLaberitno(int width, int height){
   int startx = height/2;
+  int width2 = width -1;
 
     // Entry Point
     terreno[startx][0] = 5;
     //Exit Point
-    terreno[startx][width-1] = 6;
+    terreno[startx][width2] = 6;
     //Maze Generator w Exit and Entry point
     int Num_of_walls = (width*height)*0.4;
 
     int x, y; 
     for (int i = 0; i < Num_of_walls; i++) {
 
-        while (true)
-        {
-          x = rand() % (width - 2);
-          y = rand() % (height - 2); 
-          if (terreno[x][y] == 0){
-            terreno[y][x] = 3;
-            break;
-          }
-          else{
-            continue;
-          }
-        }
-        
+      do {
+        x = rand() % (ancho - 2) + 1; // Excluir 0 y ancho-1 para evitar bordes
+        y = rand() % (largo - 2) + 1; // Excluir 0 y largo-1 para evitar bordes
+      } while (terreno[y][x] != 0); // Asegurarnos de que la posición esté libre (sin 1, 2 o 3)
+
+        terreno[y][x] = 3; // Colocar pared
     }
 }
+
 
 // Función para generar manzanas en posiciones aleatorias
 void generarManzana() {
