@@ -50,10 +50,10 @@ void TerminalUpdater::GenerateMaze() {
     // Entry and Exit Points
     int entryY = 5 % myGrid.size();
     int exitY = 5 % myGrid.size();
-    int exitX = 15 % myGrid[0].size();
+    int exitX = GRID_WIDTH - 1; // Set exit to the last column
 
     myGrid[entryY][0] = 5;  // Entry point
-    myGrid[exitY][exitX] = 6; // Exit point
+    myGrid[exitY][exitX] = 6; // Exit point (last column)
 
     // Initialize the grid with walls (3)
     for (int y = 0; y < GRID_HEIGHT; ++y) {
@@ -64,10 +64,16 @@ void TerminalUpdater::GenerateMaze() {
         }
     }
 
+    // Create a direct path from entry to exit
+    for (int y = 1; y < GRID_HEIGHT - 1; y++) {
+        myGrid[y][exitX - 1] = 0; // Create a vertical path in the penultimate column
+    }
+
     // Start carving the path from the entry point and ensure the exit is reached
     bool exitReached = false;
-    carvePath(1, entryY, exitX, exitY, exitReached);
+    carvePath(1, entryY, exitX - 1, exitY, exitReached); // Change exitX to exitX - 1 for carving
 }
+
 
 void TerminalUpdater::carvePath(int x, int y, int exitX, int exitY, bool &exitReached) {
     myGrid[y][x] = 0; // Carve out the path
@@ -92,7 +98,7 @@ void TerminalUpdater::carvePath(int x, int y, int exitX, int exitY, bool &exitRe
         int nx = x + 2 * dx; // Move by 2 cells
         int ny = y + 2 * dy;
 
-        // Check bounds and if the next cell is a wall
+        // Restrict carving to the penultimate column (nx < GRID_WIDTH - 2)
         if (nx >= 1 && nx < GRID_WIDTH - 1 && ny >= 1 && ny < GRID_HEIGHT - 1 && myGrid[ny][nx] == 3) {
             // Carve path between current and next cell
             myGrid[y + dy][x + dx] = 0; // Carve the wall between
