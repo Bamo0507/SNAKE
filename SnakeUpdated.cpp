@@ -276,7 +276,7 @@ void *moverSerpiente(void *arg) {
         actualizarTerreno();
         imprimirTerreno();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(275));
     }
 
     pthread_exit(0);
@@ -332,7 +332,7 @@ void *hiloActualizarTerreno(void *arg) {
     while (!game_over) {
         actualizarTerreno();
         imprimirTerreno();
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(400));
     }
     pthread_exit(0);
 }
