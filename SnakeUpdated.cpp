@@ -21,6 +21,8 @@ int largo = largo_inicial; // Alto actual del terreno
 int nivel = 1;  // Nivel actual
 int puntaje = 0; // Puntaje del jugador
 
+int largoDefaultContador = 0; //Contador para controlar cuando la serpiente ya haya crecido a 3
+int velocidad = 400; //Variable global para controlar la velocidad
 // Matriz del terreno
 std::vector<std::vector<int>> terreno; // 0 = camino, 1 = manzana, 2 = serpiente, 3 = pared, 5 = entrada, 6 = salida
 
@@ -237,7 +239,31 @@ void *moverSerpiente(void *arg) {
         }
 
         if (terreno[nueva_cabeza.y][nueva_cabeza.x] == 3) {
-            std::cout << "¡Te has chocado con una pared!" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀" << std::endl;
+            std::cout << "██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼" << std::endl;
+            std::cout << "██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀" << std::endl;
+            std::cout << "███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼" << std::endl;
+            std::cout << "██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼" << std::endl;
+            std::cout << "██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼" << std::endl;
+            std::cout << "██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼" << std::endl;
+            std::cout << "███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
+            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;  
+
             game_over = true;
             pthread_exit(0);
         }
@@ -245,6 +271,9 @@ void *moverSerpiente(void *arg) {
         if (terreno[nueva_cabeza.y][nueva_cabeza.x] == 6) {
             // Has completado el nivel
             puntaje += 10;
+            if (velocidad > 100){
+                velocidad -= 5;
+            }
             nivel++;
             aumentarNivel();
             continue; // Reiniciar el ciclo con el nuevo nivel
@@ -273,10 +302,13 @@ void *moverSerpiente(void *arg) {
 
         movimiento_completado = true;
 
+        if(movimiento_completado && largoDefaultContador < 3){
+            largoDefaultContador++;
+            serpiente.push_back({serpiente.back().x, serpiente.back().y});
+        }
         actualizarTerreno();
         imprimirTerreno();
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(275));
+        std::this_thread::sleep_for(std::chrono::milliseconds(velocidad));
     }
 
     pthread_exit(0);
@@ -332,7 +364,7 @@ void *hiloActualizarTerreno(void *arg) {
     while (!game_over) {
         actualizarTerreno();
         imprimirTerreno();
-        std::this_thread::sleep_for(std::chrono::milliseconds(400));
+        std::this_thread::sleep_for(std::chrono::milliseconds(275));
     }
     pthread_exit(0);
 }
@@ -341,7 +373,7 @@ void *hiloActualizarTerreno(void *arg) {
 void aumentarNivel() {
     // Limpiar la pantalla usando códigos ANSI
     std::cout << "\033[2J\033[H";
-
+    largoDefaultContador = 0;
     // Resetear el terreno y generar un nuevo laberinto
     iniciarTerreno();
 }
