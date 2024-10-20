@@ -21,8 +21,22 @@ int largo = largo_inicial; // Alto actual del terreno
 int nivel = 1;  // Nivel actual
 int puntaje = 0; // Puntaje del jugador
 
+int colorfondo = 0; //Index de colores del fondo de en un array
+int colorsnake = 0; //Index de colores de la serpiente de un array
+
+//Colores de cada objeto para generacion aleatoria de colores
+int Fondo[5] = {51, 63, 184, 214, 177};
+int Paredes[5] = {80, 97, 136, 130, 92};
+int Manzana[3] = {9, 88, 197};
+int Snake[3] = {28, 77, 84};
+int CabezaSnake[3] = {10, 106, 65};
+
 int largoDefaultContador = 0; //Contador para controlar cuando la serpiente ya haya crecido a 3
 int velocidad = 400; //Variable global para controlar la velocidad
+
+#define Num_hilos 4
+pthread_barrier_t barrera;
+
 // Matriz del terreno
 std::vector<std::vector<int>> terreno; // 0 = camino, 1 = manzana, 2 = serpiente, 3 = pared, 5 = entrada, 6 = salida
 
@@ -55,7 +69,7 @@ void *manejarInput(void *arg);
 void *hiloActualizarTerreno(void *arg);
 
 void generarLaberinto(int width, int height);
-void tallarLaberinto(int x, int y);
+void* tallarLaberinto(int x, int y);
 
 void aumentarNivel();
 void mostrarPuntaje();
@@ -95,6 +109,10 @@ void generarManzanas(int cantidad) {
 
 // Generar el laberinto usando el algoritmo de Backtracking recursivo
 void generarLaberinto(int width, int height) {
+    pthread_t threads[Num_hilos];
+
+    pthread_barrier_init(&barrera, NULL, Num_hilos);
+
     // Reiniciar el terreno con paredes
     terreno = std::vector<std::vector<int>>(height, std::vector<int>(width, 3));
 
@@ -106,8 +124,20 @@ void generarLaberinto(int width, int height) {
     int startX = 1;
     int startY = 1;
 
-    // Tallar el laberinto desde el punto inicial
-    tallarLaberinto(startX, startY);
+    for(int i = 0; i < Num_hilos; i++){
+        // Tallar el laberinto desde el punto inicial
+        pthread_create(&threads[i], NULL, [](void* arg) -> void* {
+            auto coords = static_cast<std::pair<int, int>*>(arg);
+            tallarLaberinto(coords->first, coords->second);
+            delete coords;
+            return nullptr;
+        }, new std::pair<int, int>(startX, startY));
+    }
+    
+    terreno[height - 2][width - 3] = 0; 
+    terreno[height - 2][width - 2] = 0;   
+    terreno[height - 3][width - 2] = 0;   
+
 
     // Establecer entrada y salida
     terreno[1][0] = 5;                    // Entrada
@@ -115,7 +145,7 @@ void generarLaberinto(int width, int height) {
 }
 
 // Función recursiva para tallar el laberinto
-void tallarLaberinto(int x, int y) {
+void* tallarLaberinto(int x, int y) {
     terreno[y][x] = 0; // Marcar como camino
 
     // Direcciones de movimiento: N, S, E, O
@@ -142,10 +172,17 @@ void tallarLaberinto(int x, int y) {
             tallarLaberinto(nx, ny);
         }
     }
+    pthread_barrier_wait(&barrera);
+
+    return NULL;
 }
 
 // Inicializar el terreno y la serpiente
 void iniciarTerreno() {
+    //Cambiar de color el terreno para cada nivel
+    colorfondo = rand() % 4;
+    colorsnake = rand() % 2;
+
     // Ajustar dimensiones del laberinto para cada nivel
     ancho = ancho_inicial + (nivel - 1) * 2; // Incrementar el tamaño del laberinto en cada nivel
     largo = largo_inicial + (nivel - 1) * 2;
@@ -184,19 +221,19 @@ void imprimirTerreno() {
         for (int x = 0; x < ancho; x++) {
 
             if (serpiente[0].x == x && serpiente[0].y == y) {
-                std::cout << "\033[48;5;10m  \033[0m"; // Cabeza de la serpiente
+                std::cout << "\033[48;5;" << CabezaSnake[colorsnake] << "m  " << "\033[0m"; // Cabeza de la serpiente
             } else if (terreno[y][x] == 2) {
-                std::cout << "\033[48;5;28m  \033[0m"; // Cuerpo de la serpiente
+                std::cout << "\033[48;5;" << Snake[colorsnake] << "m  " << "\033[0m"; // Cuerpo de la serpiente
             } else if (terreno[y][x] == 1) {
-                std::cout << "\033[48;5;9m  \033[0m"; // Manzana
+                std::cout << "\033[48;5;" << Manzana[colorsnake] << "m  " << "\033[0m"; // Manzana
             } else if (terreno[y][x] == 3) {
-                std::cout << "\033[48;5;80m  \033[0m"; // Pared
+                std::cout << "\033[48;5;" << Paredes[colorfondo] << "m  " << "\033[0m"; // Pared
             } else if (terreno[y][x] == 5) {
                 std::cout << "\033[48;5;220m  \033[0m"; // Entrada
             } else if (terreno[y][x] == 6) {
                 std::cout << "\033[48;5;46m  \033[0m"; // Salida
             } else {
-                std::cout << "\033[48;5;51m  \033[0m"; // Camino libre
+                std::cout << "\033[48;5;" << Fondo[colorfondo] << "m  " << "\033[0m"; // Camino libre
             }
         }
         std::cout << std::endl;
@@ -383,6 +420,10 @@ int main() {
 
     // Limpiar la pantalla
     std::cout << "\033[2J\033[H";
+
+    colorfondo = rand() % 4;
+    colorsnake = rand() % 2;
+
 
     iniciarTerreno();
 
