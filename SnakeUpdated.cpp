@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <random>
 #include <mutex>
+#include <queue>
 
 // Dimensiones iniciales del terreno
 int ancho_inicial = 8; // Ancho inicial del terreno (debe ser impar para el algoritmo)
@@ -70,6 +71,7 @@ void *hiloActualizarTerreno(void *arg);
 
 void generarLaberinto(int width, int height);
 void* tallarLaberinto(int x, int y);
+int verificarTerreno();
 
 void aumentarNivel();
 void mostrarPuntaje();
@@ -142,6 +144,19 @@ void generarLaberinto(int width, int height) {
     // Establecer entrada y salida
     terreno[1][0] = 5;                    // Entrada
     terreno[height - 2][width - 1] = 6;   // Salida
+
+    int salida = verificarTerreno();
+    std::cout << "Salida: " << salida << std::endl;
+
+    if (!salida) {
+        std::cout << "Generando nuevo laberinto..." << std::endl;
+        generarLaberinto(width, height);
+    }
+
+    
+
+    
+
 }
 
 // Función recursiva para tallar el laberinto
@@ -239,6 +254,32 @@ void imprimirTerreno() {
         std::cout << std::endl;
     }
     std::cout.flush();
+}
+
+// Verificar si el laberinto es válido
+int verificarTerreno() {
+    std::queue<std::pair<int, int>> cola;
+    std::vector<std::vector<bool>> visitado(largo, std::vector<bool>(ancho, false));
+
+    cola.push({1, 0}); // Coordenadas de la entrada
+    visitado[1][0] = true;
+
+    while (!cola.empty()) {
+        auto [x, y] = cola.front();
+        cola.pop();
+
+        for (int i = 0; i < 4; i++) {
+            int nx = x + (i == 0) - (i == 1);
+            int ny = y + (i == 2) - (i == 3);
+
+            if (nx >= 0 && nx < ancho && ny >= 0 && ny < largo && !visitado[ny][nx] && terreno[ny][nx] != 3) {
+                visitado[ny][nx] = true;
+                cola.push({nx, ny});
+            }
+        }
+    }
+
+    return visitado[largo - 2][ancho - 1];
 }
 
 // Actualizar el terreno con la posición de la serpiente y las manzanas
