@@ -35,9 +35,6 @@ int CabezaSnake[3] = {10, 106, 65};
 int largoDefaultContador = 0; //Contador para controlar cuando la serpiente ya haya crecido a 3
 int velocidad = 400; //Variable global para controlar la velocidad
 
-#define Num_hilos 4
-pthread_barrier_t barrera;
-
 // Matriz del terreno
 std::vector<std::vector<int>> terreno; // 0 = camino, 1 = manzana, 2 = serpiente, 3 = pared, 5 = entrada, 6 = salida
 
@@ -70,7 +67,7 @@ void *manejarInput(void *arg);
 void *hiloActualizarTerreno(void *arg);
 
 void generarLaberinto(int width, int height);
-void* tallarLaberinto(int x, int y);
+void tallarLaberinto(int x, int y);
 int verificarTerreno();
 
 void aumentarNivel();
@@ -111,9 +108,6 @@ void generarManzanas(int cantidad) {
 
 // Generar el laberinto usando el algoritmo de Backtracking recursivo
 void generarLaberinto(int width, int height) {
-    pthread_t threads[Num_hilos];
-
-    pthread_barrier_init(&barrera, NULL, Num_hilos);
 
     // Reiniciar el terreno con paredes
     terreno = std::vector<std::vector<int>>(height, std::vector<int>(width, 3));
@@ -126,41 +120,18 @@ void generarLaberinto(int width, int height) {
     int startX = 1;
     int startY = 1;
 
-    for(int i = 0; i < Num_hilos; i++){
-        // Tallar el laberinto desde el punto inicial
-        pthread_create(&threads[i], NULL, [](void* arg) -> void* {
-            auto coords = static_cast<std::pair<int, int>*>(arg);
-            tallarLaberinto(coords->first, coords->second);
-            delete coords;
-            return nullptr;
-        }, new std::pair<int, int>(startX, startY));
-    }
-    
-    terreno[height - 2][width - 3] = 0; 
-    terreno[height - 2][width - 2] = 0;   
-    terreno[height - 3][width - 2] = 0;   
-
+    tallarLaberinto(startX, startY);
 
     // Establecer entrada y salida
     terreno[1][0] = 5;                    // Entrada
     terreno[height - 2][width - 1] = 6;   // Salida
-
-    int salida = verificarTerreno();
-    std::cout << "Salida: " << salida << std::endl;
-
-    if (!salida) {
-        std::cout << "Generando nuevo laberinto..." << std::endl;
-        generarLaberinto(width, height);
-    }
-
-    
 
     
 
 }
 
 // Función recursiva para tallar el laberinto
-void* tallarLaberinto(int x, int y) {
+void tallarLaberinto(int x, int y) {
     terreno[y][x] = 0; // Marcar como camino
 
     // Direcciones de movimiento: N, S, E, O
@@ -187,9 +158,6 @@ void* tallarLaberinto(int x, int y) {
             tallarLaberinto(nx, ny);
         }
     }
-    pthread_barrier_wait(&barrera);
-
-    return NULL;
 }
 
 // Inicializar el terreno y la serpiente
@@ -316,31 +284,7 @@ void *moverSerpiente(void *arg) {
             pthread_exit(0);
         }
 
-        if (terreno[nueva_cabeza.y][nueva_cabeza.x] == 3) {
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀" << std::endl;
-            std::cout << "██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼" << std::endl;
-            std::cout << "██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀" << std::endl;
-            std::cout << "███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼" << std::endl;
-            std::cout << "██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼" << std::endl;
-            std::cout << "██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼" << std::endl;
-            std::cout << "██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼" << std::endl;
-            std::cout << "███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼" << std::endl;
-            std::cout << "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼" << std::endl;  
+        if (terreno[nueva_cabeza.y][nueva_cabeza.x] == 3) {  
 
             game_over = true;
             pthread_exit(0);
