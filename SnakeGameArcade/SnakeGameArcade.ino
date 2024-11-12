@@ -13,7 +13,8 @@
 #include <algorithm>
 #include <queue> 
 #include <random>
-#include "esp_system.h"  // para esp_random()
+#include "esp_system.h" 
+#include <ESP.h>
 
 #define PIN_NEO_PIXEL 16      // El pin GPIO16 del ESP32 conectado a NeoPixel
 #define PIN_LIGHT_SENSOR 36   // El pin GPIO36 del ESP32 conectado al sensor de luz
@@ -30,9 +31,6 @@
 //Variables para controlar el tiempo
 unsigned long tiempoUltimoMovimiento = 0;
 unsigned long intervaloMovimiento = 400; //estos serían milisegundos
-
-
-
 
 // Dimensiones iniciales del terreno
 int ancho = 8; 
@@ -155,7 +153,7 @@ void IRAM_ATTR  reiniciarJuego(){
   nivel = 1;
   intervaloMovimiento = 400; // Resetear velocidad
   game_over = false;
-  delay(500);
+  delay(500)
   iniciarTerreno();
 }
 //----------------------------------------------------
@@ -230,15 +228,15 @@ void loop() {
           
           NeoPixel.setBrightness(Brightness); // un valor de 0 a 255
 
-          NeoPixel.setPixelColor(pixel, NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.setPixelColor((8 + pixel), NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.setPixelColor((16 + pixel), NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.setPixelColor((24 + pixel), NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.setPixelColor((32 + pixel), NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.setPixelColor((40 + pixel), NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.setPixelColor((48 + pixel), NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.setPixelColor((56 + pixel), NeoPixel.Color(255, 255, 255));  // it only takes effect if pixels.show() is called
-          NeoPixel.show();                                           // update to the NeoPixel Led Strip
+          NeoPixel.setPixelColor(pixel, NeoPixel.Color(255, 255, 255));  
+          NeoPixel.setPixelColor((8 + pixel), NeoPixel.Color(255, 255, 255)); 
+          NeoPixel.setPixelColor((16 + pixel), NeoPixel.Color(255, 255, 255));  
+          NeoPixel.setPixelColor((24 + pixel), NeoPixel.Color(255, 255, 255));  
+          NeoPixel.setPixelColor((32 + pixel), NeoPixel.Color(255, 255, 255)); 
+          NeoPixel.setPixelColor((40 + pixel), NeoPixel.Color(255, 255, 255));  
+          NeoPixel.setPixelColor((48 + pixel), NeoPixel.Color(255, 255, 255));  
+          NeoPixel.setPixelColor((56 + pixel), NeoPixel.Color(255, 255, 255)); 
+          NeoPixel.show();                                         
 
           if(pixel > 0){
             NeoPixel.setPixelColor((pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
@@ -280,7 +278,7 @@ void moverSerpiente(){
     if (nueva_cabeza.x < 0 || nueva_cabeza.x >= ANCHO || nueva_cabeza.y < 0 || nueva_cabeza.y >= ALTO){
         Serial.println("Jugador perdió se salió del área de juego");
         game_over = true;
-        //AQUÍ TENEMOS QUE METER CÓMO VAYAMOS A MANEJAR EL FIN DE JUEGO - TIRAR PANTALLA EN ROJO puede ser o multicolor
+        ESP.restart();
         return;
     }
 
@@ -288,6 +286,7 @@ void moverSerpiente(){
     if(terreno[nueva_cabeza.y][nueva_cabeza.x] == PARED || terreno[nueva_cabeza.y][nueva_cabeza.x] == 2){
         Serial.println("Jugador perdió se chocó con pared o consigo mismo");
         game_over = true;
+        ESP.restart();
         return;
     }
 
@@ -347,9 +346,6 @@ void imprimirTerreno() {
       }
     
     NeoPixel.setBrightness(Brightness); // un valor de 0 a 255
-
-   
-
 
     for (int y = 0; y < largo; y++) {
         for (int x = 0; x < ancho; x++) {
