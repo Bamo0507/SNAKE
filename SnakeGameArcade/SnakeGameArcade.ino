@@ -1,11 +1,3 @@
-/*
- * Este código ESP32 se crea por esp32io.com
- *
- * Este código ESP32 se libera en el dominio público
- *
- * Para más detalles (instrucciones y diagrama de cableado), visita https://esp32io.com/tutorials/esp32-neopixel-led-strip
- */
-
 #include <Adafruit_NeoPixel.h>
 #include <iostream>
 #include <vector>
@@ -215,7 +207,7 @@ void loop() {
     // Manejar el fin del juego
       if (game_over) {
         Serial.println("Juego Terminado. Esperando reinicio...");
-        for (int pixel = 0; pixel < 8; pixel++) {           // for each pixel
+        for (int pixel = 0; pixel < 8; pixel++) {          
           int Light_value = analogRead(PIN_LIGHT_SENSOR); // valor entre 0 a 4095
           int Brightness = std::floor((Light_value / 16));
           if(Brightness < 20){
@@ -247,14 +239,14 @@ void loop() {
           NeoPixel.show(); 
           
           if(pixel == 7){
-            NeoPixel.setPixelColor((7), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((15), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((23), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((31), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((39), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((47), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((55), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((63), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
+            NeoPixel.setPixelColor((7), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((15), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((23), NeoPixel.Color(255, 0, 0)); 
+            NeoPixel.setPixelColor((31), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((39), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((47), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((55), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((63), NeoPixel.Color(255, 0, 0));  
             NeoPixel.show(); 
           }
           delay(100);  
