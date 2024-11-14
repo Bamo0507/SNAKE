@@ -54,8 +54,6 @@ std::vector<std::vector<int>> terreno; // 0 = camino, 1 = manzana, 2 = serpiente
 // Estructura para manejar lógica de matriz
 struct Coordenada {
     int x, y;
-
-    // Overload assignment operator for volatile objects
     Coordenada& operator=(const Coordenada& other) volatile {
         x = other.x;
         y = other.y;
@@ -87,7 +85,6 @@ Adafruit_NeoPixel NeoPixel(NUM_PIXELS, PIN_NEO_PIXEL, NEO_GRB + NEO_KHZ800);
 //IRAM_ATTR es algo propio de la ESP32 para poder hacer interrupciones y así leer el input
 
 //se agrega un Debounce en la lectura del botón, puede pasar que con un push se detecten varios inputs
-
 volatile unsigned long last_interrupt_time_w = 0;
 volatile unsigned long last_interrupt_time_a = 0;
 volatile unsigned long last_interrupt_time_s = 0;
@@ -95,10 +92,9 @@ volatile unsigned long last_interrupt_time_d = 0;
 const unsigned long debounce_delay = 200; //200 mili segundos para el debounce
 
 //PROBABLEMENTE VAYA A DAR PROBLEMA AL INICIO PUES LOS VALORES ESTARÁN EN 0,0 - hay que ver eso 
-
 //Movernos hacia arriba 'w'
 void IRAM_ATTR cambiarDireccionW(){
-    if (game_over) return;  // Ignore input if the game is over
+    if (game_over) return;  
 
     unsigned long current_time = millis();
     if (current_time - last_interrupt_time_w > debounce_delay) {
@@ -110,7 +106,7 @@ void IRAM_ATTR cambiarDireccionW(){
 }
 
 void IRAM_ATTR cambiarDireccionA() {
-  if (game_over) return;  // Ignore input if the game is over
+  if (game_over) return; 
 
   unsigned long current_time = millis();
   if (current_time - last_interrupt_time_a > debounce_delay) {
@@ -122,7 +118,7 @@ void IRAM_ATTR cambiarDireccionA() {
 }
 
 void IRAM_ATTR cambiarDireccionS() {
-  if (game_over) return;  // Ignore input if the game is over
+  if (game_over) return; 
 
   unsigned long current_time = millis();
   if (current_time - last_interrupt_time_s > debounce_delay) {
@@ -134,7 +130,7 @@ void IRAM_ATTR cambiarDireccionS() {
 }
 
 void IRAM_ATTR cambiarDireccionD() {
-  if (game_over) return;  // Ignore input if the game is over
+  if (game_over) return; 
 
   unsigned long current_time = millis();
   if (current_time - last_interrupt_time_d > debounce_delay) {
@@ -146,7 +142,7 @@ void IRAM_ATTR cambiarDireccionD() {
 }
 
 void IRAM_ATTR  reiniciarJuego(){
-  if (!game_over) return;  // Ignore input if the game is over
+  if (!game_over) return; 
   NeoPixel.clear();  // apaga todos los LEDs
   delay(500);
   puntaje = 0;
@@ -239,14 +235,14 @@ void loop() {
           NeoPixel.show();                                         
 
           if(pixel > 0){
-            NeoPixel.setPixelColor((pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((8 + pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((16 + pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((24 + pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((32 + pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((40 + pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((48 + pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
-            NeoPixel.setPixelColor((56 + pixel - 1), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
+            NeoPixel.setPixelColor((pixel - 1), NeoPixel.Color(255, 0, 0)); 
+            NeoPixel.setPixelColor((8 + pixel - 1), NeoPixel.Color(255, 0, 0)); 
+            NeoPixel.setPixelColor((16 + pixel - 1), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((24 + pixel - 1), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((32 + pixel - 1), NeoPixel.Color(255, 0, 0)); 
+            NeoPixel.setPixelColor((40 + pixel - 1), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((48 + pixel - 1), NeoPixel.Color(255, 0, 0));  
+            NeoPixel.setPixelColor((56 + pixel - 1), NeoPixel.Color(255, 0, 0));  
           }
           NeoPixel.show(); 
           
@@ -261,7 +257,7 @@ void loop() {
             NeoPixel.setPixelColor((63), NeoPixel.Color(255, 0, 0));  // it only takes effect if pixels.show() is called
             NeoPixel.show(); 
           }
-          delay(100);  // 500ms pause between each pixel
+          delay(100);  
         }
       }
   
@@ -336,7 +332,6 @@ void aumentarNivel(){
  * Función para imprimir el terreno en los LEDs
  */
 void imprimirTerreno() {
-
 
     //Control de brillo automatico en cada impresion
     int Light_value = analogRead(PIN_LIGHT_SENSOR); // valor entre 0 a 4095
