@@ -137,12 +137,7 @@ void IRAM_ATTR  reiniciarJuego(){
   if (!game_over) return; 
   NeoPixel.clear();  // apaga todos los LEDs
   delay(500);
-  puntaje = 0;
-  nivel = 1;
-  intervaloMovimiento = 400; // Resetear velocidad
-  game_over = false;
-  delay(500)
-  iniciarTerreno();
+  ESP.restart(); //Reinicia la compilacion en el ESP y borra la ram
 }
 //----------------------------------------------------
 
@@ -266,7 +261,6 @@ void moverSerpiente(){
     if (nueva_cabeza.x < 0 || nueva_cabeza.x >= ANCHO || nueva_cabeza.y < 0 || nueva_cabeza.y >= ALTO){
         Serial.println("Jugador perdió se salió del área de juego");
         game_over = true;
-        ESP.restart();
         return;
     }
 
@@ -274,7 +268,6 @@ void moverSerpiente(){
     if(terreno[nueva_cabeza.y][nueva_cabeza.x] == PARED || terreno[nueva_cabeza.y][nueva_cabeza.x] == 2){
         Serial.println("Jugador perdió se chocó con pared o consigo mismo");
         game_over = true;
-        ESP.restart();
         return;
     }
 
@@ -354,7 +347,6 @@ void imprimirTerreno() {
           }
         }
       }
-    NeoPixel.setPixelColor(0, NeoPixel.Color(255, 255, 255)); // blanco
     NeoPixel.show();
 }
 
