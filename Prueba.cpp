@@ -41,8 +41,6 @@ std::mutex direccion_mutex; // Para proteger el acceso a la variable direccion
 
 // Estructura para manejar lógica de matriz
 struct Coordenada {
-    int x, y;
-};
 
 std::vector<Coordenada> serpiente;
 Coordenada direccion = {0, 0};
